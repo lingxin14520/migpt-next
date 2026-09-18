@@ -40,15 +40,17 @@ export default {
      * - ❌ https://api.openai.com/v1/（最后多了一个 /
      * - ❌ https://api.openai.com/v1/chat/completions（不需要加 /chat/completions）
      */
-    baseURL: 'https://api.openai.com/v1',
+    // 大模型接口地址：默认走 DeepSeek（兼容 OpenAI 接口），可用环境变量覆盖
+    baseURL: process.env.MIGPT_BASE_URL || 'https://api.deepseek.com/v1',
     /**
      * API 密钥
      */
-    apiKey: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    // 密钥：读取本机已有的 DEEPSEEK_API_KEY 环境变量，避免把密钥写进仓库
+    apiKey: process.env.DEEPSEEK_API_KEY || '',
     /**
      * 模型名称
      */
-    model: 'gpt-4.1-mini',
+    model: process.env.MIGPT_MODEL || 'deepseek-chat',
   },
   prompt: {
     /**
