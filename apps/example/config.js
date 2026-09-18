@@ -1,3 +1,13 @@
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+// 本地密钥文件（.gitignore 已忽略，不会提交）：apps/example/.env.local
+// 可参考同目录下的 .env.local.example，把密钥和音箱账号写进去即可
+const localEnvPath = fileURLToPath(new URL('.env.local', import.meta.url));
+if (existsSync(localEnvPath)) {
+  process.loadEnvFile(localEnvPath);
+}
+
 /**
  * @type {import('@mi-gpt/next').MiGPTConfig}
  */
@@ -9,25 +19,25 @@ export default {
      *
      * 如果提示找不到设备，请打开调试模式获取设备真实的 name、miotDID 或 mac 地址填入
      */
-    did: 'Xiaomi 智能音箱 Pro',
+    did: process.env.MIGPT_SPEAKER_DID || 'Xiaomi 智能音箱 Pro',
     /**
      * 小米 ID（一串数字）
      *
      * 注意：不是手机号或邮箱，请在小米账号「个人信息」-「小米 ID」查看
      */
-    userId: '1234567',
+    userId: process.env.MIGPT_USER_ID || '1234567',
     /**
      * 小米账号登录密码
      *
      * 如果提示登录失败，请使用 passToken 登录
      */
-    password: 'xxxxx',
+    password: process.env.MIGPT_PASSWORD || 'xxxxx',
     /**
      * （可选）小米账号 passToken
      *
      * 获取教程：https://github.com/idootop/migpt-next/issues/4
      */
-    passToken: 'xxxxxxxxx',
+    passToken: process.env.MIGPT_PASS_TOKEN || 'xxxxxxxxx',
   },
   openai: {
     /**
@@ -46,7 +56,7 @@ export default {
      * API 密钥
      */
     // 密钥：读取本机已有的 DEEPSEEK_API_KEY 环境变量，避免把密钥写进仓库
-    apiKey: process.env.DEEPSEEK_API_KEY || '',
+    apiKey: process.env.MIGPT_API_KEY || process.env.DEEPSEEK_API_KEY || '',
     /**
      * 模型名称
      */
