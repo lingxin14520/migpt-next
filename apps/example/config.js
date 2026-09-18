@@ -8,6 +8,10 @@ if (existsSync(localEnvPath)) {
   process.loadEnvFile(localEnvPath);
 }
 
+// 小爱原生就能处理的设备控制指令：命中后不调用 AI，交回小爱执行，避免抢答/重复播报
+const kDeviceCommandPattern =
+  /打开|关闭|关掉|开一下|关上|开启|暂停|继续播放|停止|播放|下一首|上一首|音量|静音|大声|小声|模式|温度|亮度|色温|风速|定时|倒计时|开灯|关灯|灯光|空调|风扇|扫地|窗帘|插座|电视|净化器|加湿器|除湿机|暖风机|晾衣架|热水器|摄像头|门锁|浴霸|新风机|电饭煲|洗衣机|冰箱|开关|遥控|红外|传感器/;
+
 /**
  * @type {import('@mi-gpt/next').MiGPTConfig}
  */
@@ -80,11 +84,17 @@ export default {
    * - 请问地球为什么是圆的？
    * - 你知道世界上跑的最快的动物是什么吗？
    */
-  callAIKeywords: ['请', '你'],
+  // 空字符串 '' 表示所有消息都交给 AI 回复（设备控制指令已在 onMessage 里排除）
+  callAIKeywords: [''],
   /**
    * 自定义消息回复
    */
   async onMessage(engine, { text }) {
+    // 设备控制类指令交回小爱原生处理
+    if (kDeviceCommandPattern.test(text)) {
+      return { handled: true };
+    }
+
     if (text === '测试播放文字') {
       return { text: '你好，很高兴认识你！' };
     }
